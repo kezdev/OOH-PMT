@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProjectListResource;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,12 +14,12 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::paginate(4);
+        $projects = Project::paginate(10);
 
         return Inertia::render(
             'projects/index',
             [
-                'projects' => $projects
+                'projects' => ProjectListResource::collection($projects)
             ]
         );
     }

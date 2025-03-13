@@ -1,6 +1,6 @@
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import {BreadcrumbItem} from "@/types";
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Projects', href: '/projects' },
@@ -9,6 +9,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface Project {
     id: number;
     name: string;
+    code: string;
 }
 
 interface PaginationLinks {
@@ -17,57 +18,61 @@ interface PaginationLinks {
     active: boolean;
 }
 
+interface PaginationMeta {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    links: PaginationLinks[];
+}
+
 interface ProjectListProps {
     projects: {
         data: Project[];
-        links: PaginationLinks[];
+        meta: PaginationMeta;
     };
 }
 
 const ProjectList = ({ projects }: ProjectListProps) => {
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Projects" />
             <div className="flex flex-col p-4">
-                <h1 className="text-2xl font-bold mb-4">Projects</h1>
 
-                {/* Table */}
-                <div className="overflow-x-auto">
-                    <table className="w-full border-collapse border border-gray-300">
-                        <thead>
-                        <tr className="bg-gray-200">
-                            <th className="border p-2">ID</th>
-                            <th className="border p-2">Name</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {projects.data.map((project) => (
-                            <tr key={project.id} className="border-b">
-                                <td className="border p-2">{project.id}</td>
-                                <td className="border p-2">{project.name}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
+                <div className="overflow-x-auto bg-sidebar rounded">
+                    {projects.data.map((project) => (
+                        <a
+                            key={project.id}
+                            href={`/projects/${project.id}`}
+                            className="flex items-center py-4 border-b last:border-0 px-6 hover:bg-sidebar-accent rounded cursor-pointer"
+                        >
+                            <span className="text-[10px] pr-4 text-gray-400">{project.code}</span>
+                            <h1>{project.name}</h1>
+                        </a>
+                    ))}
                 </div>
 
-                {/* Pagination */}
-                <div className="mt-4 flex justify-center space-x-2">
-                    {projects.links.map((link, index) =>
-                        link.url ? (
-                            <Link
-                                key={index}
-                                href={link.url}
-                                className={`px-3 py-1 border rounded ${link.active ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                                dangerouslySetInnerHTML={{ __html: link.label }} // Laravel includes HTML entities
-                            />
-                        ) : (
-                            <span key={index} className="px-3 py-1 border rounded text-gray-400">
-                                {link.label}
-                            </span>
-                        )
-                    )}
-                </div>
+                {projects.meta.links && projects.meta.links.length > 0 && (
+                    <div className="mt-4 flex flex-start space-x-2">
+                        {projects.meta.links.map((link, index) =>
+                            link.url ? (
+                                <Link
+                                    key={index}
+                                    href={link.url}
+                                    className={`px-3 py-1 border rounded ${link.active ? 'bg-blue-500 text-white' : ''}`}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            ) : (
+                                <span key={index}
+                                      className="px-3 py-1 border rounded text-gray-400 opacity-25 cursor-not-allowed"
+                                      dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            )
+                        )}
+                    </div>
+                )}
+
             </div>
         </AppLayout>
     );
