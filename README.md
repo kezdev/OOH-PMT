@@ -1,2 +1,7 @@
 # 📝 OOH-PMT
-A Trello-style platform for organizing and managing all OOH projects
+A Trello-style platform for organising and managing all OOH projects
+
+.
+
+.
+
